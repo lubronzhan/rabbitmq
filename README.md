@@ -1,5 +1,5 @@
 # rabbitmq
-Learning
+Learning https://www.rabbitmq.com/tutorials/tutorial-one-go.html
 
 
 1. Basic receive and sender. Open 3 terminals
@@ -17,6 +17,7 @@ go run 1-send.go
 ```
 
 2. Long running task, wait for execute to finish before ack
+
 ```sh
 go run 2-worker.go
 ```
