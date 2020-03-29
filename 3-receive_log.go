@@ -3,22 +3,17 @@ package main
 import (
 	"log"
 
+	"github.com/lubronzhan/rabbitmp/pkg/utils"
 	"github.com/streadway/amqp"
 )
 
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
-	}
-}
-
 func main() {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	failOnError(err, "Failed to connect to RabbitMQ")
+	utils.FailOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
 	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
+	utils.FailOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
 	err = ch.ExchangeDeclare(
@@ -30,7 +25,7 @@ func main() {
 		false,    // no-wait
 		nil,      // arguments
 	)
-	failOnError(err, "Failed to declare an exchange")
+	utils.FailOnError(err, "Failed to declare an exchange")
 
 	q, err := ch.QueueDeclare(
 		"",    // name. rabbitmq will generate random name
@@ -40,7 +35,7 @@ func main() {
 		false, // no-wait
 		nil,   // arguments
 	)
-	failOnError(err, "Failed to declare a queue")
+	utils.FailOnError(err, "Failed to declare a queue")
 
 	// tell exchange to send to the queue specified q
 	err = ch.QueueBind(
@@ -50,7 +45,7 @@ func main() {
 		false,
 		nil,
 	)
-	failOnError(err, "Failed to bind a queue")
+	utils.FailOnError(err, "Failed to bind a queue")
 
 	msgs, err := ch.Consume(
 		q.Name, // queue
@@ -61,7 +56,7 @@ func main() {
 		false,  // no-wait
 		nil,    // args
 	)
-	failOnError(err, "Failed to register a consumer")
+	utils.FailOnError(err, "Failed to register a consumer")
 
 	forever := make(chan bool)
 
